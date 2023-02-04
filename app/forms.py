@@ -1,114 +1,181 @@
-from datetime import datetime
+from datetime import date
 
 from pydantic import BaseModel
-# from typing import Optional
-from .models import Status, Blood_type
+from typing import List, Optional
+from .models import Units, Category
 
-# USER
-class UserLoginForm(BaseModel):
-    email: str
-    password: str
-
-class UserBase(BaseModel):
+class IngredientCreateForm(BaseModel):
     id: int
-    email: str
     name: str
-    blood_type: Blood_type
-
+    image: str
+    category: Category
+    stored_amount: float
+    measure: Units
+    expiry_date: date
     class Config:
         orm_mode = True
 
-class UserCreateForm(BaseModel):
-    email: str
-    password: str
+class IngredientUpdateForm(BaseModel):
     name: str
-    blood_type: Blood_type
-    status: Status
-
+    image: str
+    category: Category
+    stored_amount: float
+    measure: Units
+    expiry_date: date
     class Config:
         orm_mode = True
 
-class UserUpdateForm(BaseModel):
-    email: str
-    password: str
+class ReceiptCreateForm(BaseModel):
+    ingredient_id: int
+    amount: float
+    class Config:
+        orm_mode = True
+
+class MealCreateForm(BaseModel):
+    id: int 
     name: str
-    blood_type: Blood_type
-    status: Status
-
+    image: str
+    receipt: str
+    difficulty: int
     class Config:
         orm_mode = True
 
-class DonationBase(BaseModel):
-    volume: float
-    date: datetime
-
-    class Config:
-        orm_mode = True
-
-class UserGetForm(BaseModel):
-    id: int
-    email: str
+class IngredientGetForm(BaseModel):
+    ingredient_id: int
     name: str
-    blood_type: Blood_type
-    volume: float
-    status: Status
-    admin_id: int
-    donations: list[DonationBase]
+    ingredient_image: str
+    category: Category
+    stored_amount: float
+    measure: Units
+    expiry_date: date
+    # meals: List[MealBase]
 
     class Config:
         orm_mode = True
 
-class UserGetAForm(BaseModel):
-    id: int
-    email: str
-    name: str
-    status: Status
-    donors: list[UserGetForm]
+class MealGetForm(BaseModel):
+    meal_id: int 
+    meal_name: str
+    meal_image: str
+    receipt: str
+    difficulty: int
 
     class Config:
         orm_mode = True
 
+class ReceiptGetForm(BaseModel):
+    meal: MealGetForm
+    ingredient: IngredientGetForm
+    amount: float
 
-class DonationCreateForm(BaseModel):
-    user_id: int
-    volume: float
-    clinic_id: int
+# # from typing import Optional
+# from .models import Status, Blood_type
 
-class ClinicBase(BaseModel):
-    clinic_id: int
-    address: str
-    altitude: float
-    longitude: float
+# # USER
+# class UserLoginForm(BaseModel):
+#     email: str
+#     password: str
 
-    class Config:
-        orm_mode = True
+# class UserBase(BaseModel):
+#     id: int
+#     email: str
+#     name: str
+#     blood_type: Blood_type
 
-class DonationGetForm(BaseModel):
-    record_id: int
-    user: UserBase
-    volume: float
-    clinic: ClinicBase
-    date: datetime
+#     class Config:
+#         orm_mode = True
+
+# class UserCreateForm(BaseModel):
+#     email: str
+#     password: str
+#     name: str
+#     blood_type: Blood_type
+#     status: Status
+
+#     class Config:
+#         orm_mode = True
+
+# class UserUpdateForm(BaseModel):
+#     email: str
+#     password: str
+#     name: str
+#     blood_type: Blood_type
+#     status: Status
+
+#     class Config:
+#         orm_mode = True
+
+# class DonationBase(BaseModel):
+#     volume: float
+#     date: datetime
+
+#     class Config:
+#         orm_mode = True
+
+# class UserGetForm(BaseModel):
+#     id: int
+#     email: str
+#     name: str
+#     blood_type: Blood_type
+#     volume: float
+#     status: Status
+#     admin_id: int
+#     donations: list[DonationBase]
+
+#     class Config:
+#         orm_mode = True
+
+# class UserGetAForm(BaseModel):
+#     id: int
+#     email: str
+#     name: str
+#     status: Status
+#     donors: list[UserGetForm]
+
+#     class Config:
+#         orm_mode = True
+
+
+# class DonationCreateForm(BaseModel):
+#     user_id: int
+#     volume: float
+#     clinic_id: int
+
+# class ClinicBase(BaseModel):
+#     clinic_id: int
+#     address: str
+#     altitude: float
+#     longitude: float
+
+#     class Config:
+#         orm_mode = True
+
+# class DonationGetForm(BaseModel):
+#     record_id: int
+#     user: UserBase
+#     volume: float
+#     clinic: ClinicBase
+#     date: datetime
     
-    class Config:
-        orm_mode = True
+#     class Config:
+#         orm_mode = True
 
-class DonationBaseClinic(BaseModel):
-    user_id: int
-    volume: float
-    date: datetime
+# class DonationBaseClinic(BaseModel):
+#     user_id: int
+#     volume: float
+#     date: datetime
 
-    class Config:
-        orm_mode = True
+#     class Config:
+#         orm_mode = True
 
-class ClinicGetForm(ClinicBase):
-    donations: list[DonationBaseClinic]
+# class ClinicGetForm(ClinicBase):
+#     donations: list[DonationBaseClinic]
 
-    class Config:
-        orm_mode = True
+#     class Config:
+#         orm_mode = True
 
-class ClinicCreateForm(BaseModel):
-    address: str
-    altitude: float
-    longitude: float
+# class ClinicCreateForm(BaseModel):
+#     address: str
+#     altitude: float
+#     longitude: float
 
