@@ -144,6 +144,7 @@ def get_meal_by_id(id:int, database=Depends(get_db)):
 # @router.put("")
 # @router.delete()
 
+# R E C E I P T __ __ __ __ __
 @router.post("/receipt/{id}", tags=['receipt'], status_code=201)
 def create_receipt_by_mealId(id:int, list_form: List[ReceiptCreateForm] = Body(...), database=Depends(get_db)):
     exist = database.query(Meal).filter(Meal.meal_id == id).one_or_none()
@@ -161,7 +162,11 @@ def create_receipt_by_mealId(id:int, list_form: List[ReceiptCreateForm] = Body(.
 
 @router.get("/receipt", tags=['receipt'], response_model=List[ReceiptGetForm])
 def get_all_receipts(database=Depends(get_db)):
-    return database.query(Receipts).all()
+    rceps = database.query(Receipts).all()
+    for el in rceps:
+        el.ingredients.category = Category[el.ingredients.category].value
+        el.ingredients.measure = Units[el.ingredients.measure].value
+    return rceps
 
 # @router.post("/register", tags=["user"], name='user:create', status_code=201)#dependencies=[Depends(JWTBearer())],
 # def create_user(userform: UserCreateForm = Body(...), database: Session = Depends(get_db), token=Depends(JWTBearer())):

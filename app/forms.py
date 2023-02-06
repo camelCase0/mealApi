@@ -64,9 +64,13 @@ class MealGetForm(BaseModel):
         orm_mode = True
 
 class ReceiptGetForm(BaseModel):
-    meal: MealGetForm
-    ingredient: IngredientGetForm
+    # meal_id: int
+    meals: MealGetForm
+    # ingredient_id: int
+    ingredients: IngredientGetForm
     amount: float
+    class Config:
+        orm_mode = True
 
 # # from typing import Optional
 # from .models import Status, Blood_type
