@@ -71,6 +71,15 @@ class ReceiptsGetForMeal(BaseModel):
     expiry_date: date
     amount: float
 
+class MealGetBaseForm(BaseModel):
+    meal_id: int 
+    meal_name: str
+    meal_image: str
+    receipt: str
+    difficulty: int
+
+    class Config:
+        orm_mode = True
 
 class MealGetForm(BaseModel):
     meal_id: int 

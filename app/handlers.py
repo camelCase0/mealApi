@@ -162,7 +162,7 @@ def delete_meal_by_Id(id:int, database=Depends(get_db)):
         database.delete(el)
         database.commit()
     return 200
-    
+
 # R E C E I P T __ __ __ __ __
 @router.post("/receipt/{id}", tags=['receipt'], status_code=201)
 def create_receipt_by_mealId(id:int, list_form: List[ReceiptCreateForm] = Body(...), database=Depends(get_db)):
