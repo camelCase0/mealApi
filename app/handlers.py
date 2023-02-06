@@ -7,7 +7,7 @@ from starlette import status
 
 # from app.forms import UserLoginForm, UserCreateForm, UserGetForm, DonationCreateForm, DonationGetForm, ClinicCreateForm, ClinicGetForm
 from app.models import Category, Units, Ingredients, Meal, Base, Receipts
-from app.forms import IngredientCreateForm, IngredientUpdateForm, IngredientGetForm, MealCreateForm, MealGetForm, ReceiptCreateForm, ReceiptGetForm
+from app.forms import IngredientCreateForm, IngredientUpdateForm, IngredientGetForm, MealCreateForm, MealGetForm, ReceiptCreateForm, ReceiptGetForm, ReceiptsGetForMeal
 # from app.utils import get_password_hash
 # from app.auth import check_auth_token
 
@@ -135,15 +135,53 @@ def create_meal(cmf: MealCreateForm = Body(...), database=Depends(get_db)):
 
 @router.get("/meal/{id}", tags=['meal'], response_model=MealGetForm)
 def get_meal_by_id(id:int, database=Depends(get_db)):
-    meal = database.query(Meal).filter(Meal.meal_id == id).one_or_none()
+    meal = database.query(Meal).filter(Meal.meal_id == id).first()
     if not meal:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No such item")
     # print(vars(meal.ingredients))
-    return meal
+    ingreds = []
+    for el in meal.receipts:
+        ing = database.query(Ingredients).filter(Ingredients.ingredient_id == el.ingredient_id).first()
+        rec_amount = database.query(Receipts).filter(Receipts.ingredient_id == el.ingredient_id,Receipts.meal_id == el.meal_id ).first()
+        rec = ReceiptsGetForMeal(
+            name = ing.name,
+            ingredient_image = ing.ingredient_image,
+            category = Category[ing.category].value,
+            stored_amount = ing.stored_amount,
+            measure=  Units[ing.measure].value,
+            expiry_date= ing.expiry_date,
+            amount = rec_amount.amount
+        )
+        ingreds.append(rec)
+    # ingreds = ingredient_refactor(ingreds)
+    print(vars(ing))
+
+    res_meal = MealGetForm(
+        meal_id = meal.meal_id, 
+        meal_name = meal.meal_name,
+        meal_image = meal.meal_image,
+        receipt = meal.receipt,
+        difficulty = meal.difficulty,
+        receipts = ingreds
+    )
+    return res_meal
 
 # @router.put("")
 # @router.delete()
-
+@router.delete("/meal/{id}", tags=['meal'])
+def delete_meal_by_Id(id:int, database=Depends(get_db)):
+    exist = database.query(Meal).filter(Meal.meal_id == id).one_or_none()
+    if not exist:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No such item")
+    database.delete(exist)
+    database.commit()
+    
+    recepts = database.query(Receipts).filter(Receipts.meal_id == id).all()
+    for el in recepts:
+        database.delete(el)
+        database.commit()
+    return 200
+    
 # R E C E I P T __ __ __ __ __
 @router.post("/receipt/{id}", tags=['receipt'], status_code=201)
 def create_receipt_by_mealId(id:int, list_form: List[ReceiptCreateForm] = Body(...), database=Depends(get_db)):
@@ -159,6 +197,18 @@ def create_receipt_by_mealId(id:int, list_form: List[ReceiptCreateForm] = Body(.
         database.add(new_rec)
         database.commit()
     return 201
+
+@router.delete("/receipt/{id}", tags=['receipt'], status_code=200)
+def delete_receipt_by_mealId(id:int, database=Depends(get_db)):
+    exist = database.query(Meal).filter(Meal.meal_id == id).one_or_none()
+    if not exist:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No such item")
+
+    exist = database.query(Receipts).filter(Receipts.meal_id == id).all()
+    for el in exist:
+        database.delete(el)
+        database.commit()
+    return 200
 
 @router.get("/receipt", tags=['receipt'], response_model=List[ReceiptGetForm])
 def get_all_receipts(database=Depends(get_db)):

@@ -53,24 +53,36 @@ class IngredientGetForm(BaseModel):
     class Config:
         orm_mode = True
 
+class ReceiptGetForm(BaseModel):
+    meal_id: int
+    # meals: MealGetForm
+    ingredient_id: int
+    # ingredients: IngredientGetForm
+    amount: float
+    class Config:
+        orm_mode = True
+
+class ReceiptsGetForMeal(BaseModel):
+    name: str
+    ingredient_image: str
+    category: Category
+    stored_amount: float
+    measure: Units
+    expiry_date: date
+    amount: float
+
+
 class MealGetForm(BaseModel):
     meal_id: int 
     meal_name: str
     meal_image: str
     receipt: str
     difficulty: int
+    receipts: List[ReceiptsGetForMeal]
 
     class Config:
         orm_mode = True
 
-class ReceiptGetForm(BaseModel):
-    # meal_id: int
-    meals: MealGetForm
-    # ingredient_id: int
-    ingredients: IngredientGetForm
-    amount: float
-    class Config:
-        orm_mode = True
 
 # # from typing import Optional
 # from .models import Status, Blood_type
