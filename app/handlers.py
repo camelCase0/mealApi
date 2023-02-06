@@ -6,7 +6,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from starlette import status
 
 from app.models import Category, Units, Ingredients, Meal, Base, Receipts
-from app.forms import IngredientCreateForm, IngredientUpdateForm, IngredientGetForm, MealCreateForm, MealGetForm, ReceiptCreateForm, ReceiptGetForm, ReceiptsGetForMeal
+from app.forms import IngredientCreateForm, IngredientUpdateForm, IngredientGetForm, MealCreateForm, MealGetForm, ReceiptCreateForm, ReceiptGetForm, ReceiptsGetForMeal, MealGetAllForm
 from .database import SessionLocal, engine
 from . import crud
 Base.metadata.create_all(bind=engine)
@@ -149,6 +149,9 @@ def get_meal_by_id(id:int, database=Depends(get_db)):
     )
     return res_meal
 
+@router.get("/meal/", tags=['meal'], response_model=List[MealGetAllForm])
+def get_meals(database=Depends(get_db)):
+    return database.query(Meal).all()
 @router.delete("/meal/{id}", tags=['meal'])
 def delete_meal_by_Id(id:int, database=Depends(get_db)):
     exist = database.query(Meal).filter(Meal.meal_id == id).one_or_none()

@@ -91,3 +91,11 @@ class MealGetForm(BaseModel):
 
     class Config:
         orm_mode = True
+
+class MealGetAllForm(BaseModel):
+    meal_id: int 
+    meal_name: str
+    meal_image: str
+    difficulty: int
+    class Config:
+        orm_mode = True
