@@ -28,12 +28,6 @@ class Units(Enum):
     ml = "ml"
     g = "g"
 
-# class Fridge(Base):
-#     __tablename__ = "fridge"
-#     ingredient_id = Column(Integer, ForeignKey("ingredients.ingredient_id"), primary_key=True)
-#     ingredient = relationship("Ingredients", back_populates="fridge") 
-#     amount = Column(Float)
-#     expiry_date = Column(DateTime, default=datetime.utcnow())
 class Ingredients(Base):
     __tablename__ = 'ingredients'
     
@@ -46,9 +40,6 @@ class Ingredients(Base):
     expiry_date = Column(DateTime, default=date)
 
     receipts = relationship("Receipts", back_populates="ingredients")
-
-    # meals = relationship("Meal", secondary="receipts", back_populates="ingredients")
-    # donations = relationship("Donations", back_populates="ingredients")
 
 class Meal(Base):
     __tablename__ = "meal"
@@ -72,43 +63,3 @@ class Receipts(Base):
     ingredient_id = Column(Integer, ForeignKey('ingredients.ingredient_id'))
     ingredients = relationship("Ingredients", back_populates="receipts")
     amount = Column(Float)
-    # ingredients = relationship("Ingredients", secondary="receipts", back_populates="meals")
-
-# class Meal_Ingredient(Base):
-
-#     meal_id = Column(Integer, ForeignKey="meal.meal_id")
-#     ingredient_id = Column(Integer, ForeignKey="ingredients.id")
-
-
-# class Donations(Base):
-#     __tablename__ = 'donations'
-
-#     record_id = Column(Integer, primary_key=True)
-#     volume = Column(Integer)
-#     date = Column(DateTime, default=datetime.utcnow())
-    
-#     user_id = Column(Integer, ForeignKey('users.id'))
-#     user = relationship("User", back_populates="donations")
-    
-#     clinic_id = Column(Integer, ForeignKey('clinics.clinic_id'))
-#     clinic = relationship("Clinics", back_populates="donations")
-
-
-# class Clinics(Base):
-#     __tablename__ = 'clinics'
-
-#     clinic_id = Column(Integer, primary_key=True)
-#     address = Column(String)
-#     altitude = Column(Float)
-#     longitude = Column(Float)
-
-#     donations = relationship("Donations", back_populates="clinic")
-
-#
-# class AuthToken(Base):
-#     __tablename__ = 'auth_token'
-#
-#     id = Column(Integer, primary_key=True)
-#     token = Column(String)
-#     user_id = Column(Integer, ForeignKey('users.id'))
-#     created_at = Column(String, default=datetime.utcnow())
