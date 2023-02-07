@@ -107,7 +107,7 @@ def create_meal(cmf: MealCreateForm = Body(...), database=Depends(get_db)):
     if exist:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="already exists")
     new_meal = Meal(
-        meal_id = cmf.id,
+        # meal_id = cmf.id,
         meal_name = cmf.name,
         meal_image = cmf.image,
         receipt = cmf.receipt,
