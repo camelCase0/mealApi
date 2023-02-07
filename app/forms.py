@@ -32,7 +32,7 @@ class ReceiptCreateForm(BaseModel):
         orm_mode = True
 
 class MealCreateForm(BaseModel):
-    id: int 
+    # id: int 
     name: str
     image: str
     receipt: str
