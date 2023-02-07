@@ -228,8 +228,5 @@ def delete_receipt_by_mealId(id:int, database=Depends(get_db)):
 @router.get("/receipt", tags=['receipt'], response_model=List[ReceiptGetForm])
 def get_all_receipts(database=Depends(get_db)):
     rceps = database.query(Receipts).all()
-    # for el in rceps:
-    #     el.ingredients.category = Category[el.ingredients.category].value
-    #     el.ingredients.measure = Units[el.ingredients.measure].value
     return rceps
 
