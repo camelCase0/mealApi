@@ -149,9 +149,40 @@ def get_meal_by_id(id:int, database=Depends(get_db)):
     )
     return res_meal
 
-@router.get("/meal/", tags=['meal'], response_model=List[MealGetAllForm])
+@router.get("/meal/", tags=['meal'], response_model=List[MealGetForm]) #MealGetAllForm
 def get_meals(database=Depends(get_db)):
-    return database.query(Meal).all()
+    meals = database.query(Meal).all()
+    res_meals = []
+    for meal in meals:
+        ingreds = []
+        for el in meal.receipts:
+            ing = database.query(Ingredients).filter(Ingredients.ingredient_id == el.ingredient_id).first()
+            rec_amount = database.query(Receipts).filter(Receipts.ingredient_id == el.ingredient_id,Receipts.meal_id == el.meal_id ).first()
+            rec = ReceiptsGetForMeal(
+                name = ing.name,
+                ingredient_image = ing.ingredient_image,
+                category = Category[ing.category].value,
+                stored_amount = ing.stored_amount,
+                measure=  Units[ing.measure].value,
+                expiry_date= ing.expiry_date,
+                amount = rec_amount.amount
+            )
+            ingreds.append(rec)
+
+        res_meal = MealGetForm(
+            meal_id = meal.meal_id, 
+            meal_name = meal.meal_name,
+            meal_image = meal.meal_image,
+            receipt = meal.receipt,
+            difficulty = meal.difficulty,
+            receipts = ingreds
+        )
+        res_meals.append(res_meal)
+    return res_meals
+
+# @router.get("/meal-to-cook", tags=['meal'], response_model=List[MealGetAllForm])
+# def get_awailable_meals()
+
 @router.delete("/meal/{id}", tags=['meal'])
 def delete_meal_by_Id(id:int, database=Depends(get_db)):
     exist = database.query(Meal).filter(Meal.meal_id == id).one_or_none()
@@ -197,8 +228,8 @@ def delete_receipt_by_mealId(id:int, database=Depends(get_db)):
 @router.get("/receipt", tags=['receipt'], response_model=List[ReceiptGetForm])
 def get_all_receipts(database=Depends(get_db)):
     rceps = database.query(Receipts).all()
-    for el in rceps:
-        el.ingredients.category = Category[el.ingredients.category].value
-        el.ingredients.measure = Units[el.ingredients.measure].value
+    # for el in rceps:
+    #     el.ingredients.category = Category[el.ingredients.category].value
+    #     el.ingredients.measure = Units[el.ingredients.measure].value
     return rceps
 
