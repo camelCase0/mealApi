@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   mealapi:
-    build: .
+    image: koldynok/mealapi:latest
     container_name: mealapi
     command: uvicorn app.main:app --host=0.0.0.0 --port 80
     ports:
@@ -10,8 +10,8 @@ services:
        - .env
     volumes:
        - mealapidb:/code/db
-    networks:
-       - nginx-proxy-net
+   #  networks:
+   #     - nginx-proxy-net
 
     # depends_on:
     #   - db
@@ -30,8 +30,8 @@ services:
 #     restart: always
 #     networks:
 #       - stack
-networks:
-  nginx-proxy-net:
+# networks:
+#   nginx-proxy-net:
     # external: true
 
 volumes:
